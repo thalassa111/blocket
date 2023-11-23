@@ -26,9 +26,16 @@ public class UserController {
         return ResponseEntity.ok("customer added: " + customerDto.getName());
     }
 
+    //will generate a token for a user who provide a correct email and password
     @GetMapping("/user/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
-        return ResponseEntity.ok("Generated token: " + userService.getUserByEmail(loginRequestDto.email, loginRequestDto.password));
+        return ResponseEntity.ok("Generated token: " + userService.generateTokenForUserByEmailAndPassword(loginRequestDto.email, loginRequestDto.password));
+    }
+
+    //get a user based on token
+    @GetMapping("/user/get-user")
+    public ResponseEntity<User> getUser(@RequestParam String token){
+        return ResponseEntity.ok(userService.getCustomerByToken(token));
     }
 
     @GetMapping("/user/get-all-users")
