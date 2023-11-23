@@ -29,12 +29,12 @@ public class UserService {
          return this.userRepository.save(customer);
     }
 
-    public String getUserByEmail(String email, String password){
+    public String generateTokenForUserByEmailAndPassword(String email, String password){
         try {
             User user = userRepository.findByEmail(email);
             if (user != null) {
                 if (user.getPassword().equals(password)) {
-                    return JwtUtil.createToken(user.getName());
+                    return JwtUtil.createToken(String.valueOf(user.getId()));
                 }
             } else {
                 return "email not found";
@@ -44,6 +44,11 @@ public class UserService {
             return "error when getting email";
         }
         return "wrong password";
+    }
+
+    public User getCustomerByToken(String token){
+        String subject = JwtUtil.getSubjectFromToken(token);
+        return userRepository.findById(Integer.parseInt(subject));
     }
 
 
