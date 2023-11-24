@@ -5,7 +5,9 @@ import com.springboot.blocket.dtos.UserCustomerDto;
 import com.springboot.blocket.models.User;
 import com.springboot.blocket.repositories.UserRepository;
 import com.springboot.blocket.utilities.JwtUtil;
+import com.springboot.blocket.utilities.PasswordEncoderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,19 +16,21 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
-
+    private PasswordEncoderUtil passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoderUtil passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createCustomer(UserCustomerDto createDto){
-         var customer = new User(   createDto.getName(),
+        String salt = BCrypt.gensalt();
+        var customer = new User(   createDto.getName(),
                                     createDto.getEmail(),
                                     createDto.getAddress(),
                                     createDto.getRole(),
-                                    createDto.getPassword());
-
+                                    passwordEncoder.encodePassword(createDto.getPassword(), salt),
+                                    salt);
          return this.userRepository.save(customer);
     }
 
@@ -34,9 +38,10 @@ public class UserService {
         try {
             User user = userRepository.findByEmail(email);
             if (user != null) {
-                if (user.getPassword().equals(password)) {
+                //will compare the raw password with the hashed one along with the salt, if they match, its ok
+                if(passwordEncoder.verifyPassword(password, user.password, user.getSalt())){
                     System.out.println("user.getID: " + user.getId());
-                    return JwtUtil.createToken(String.valueOf(user.getId()), user.getName());
+                    return "Generated token: " + JwtUtil.createToken(String.valueOf(user.getId()), user.getName());
                 }
             } else {
                 return "email not found";
@@ -53,7 +58,6 @@ public class UserService {
         return userRepository.findById(Integer.parseInt(subject));
     }
 
-
     //only used for testing
     public List<User> getAllCustomers(){
         return userRepository.findAll();
@@ -63,8 +67,9 @@ public class UserService {
     public String verifyToken(String token){
         boolean isValid = JwtUtil.verifyToken(token);
         if(isValid){
-            String subject = JwtUtil.getSubjectFromToken(token);
-            return "Token is valid, Subject: " + subject;
+            String id = JwtUtil.getSubjectFromToken(token);
+            User user = userRepository.findById(Integer.parseInt(id));
+            return "Token is valid name: " + user.getName() + "  id: " + user.getId();
         }
         else {
             return "invalid token";
@@ -84,7 +89,7 @@ public class UserService {
             return "User has been deleted: " + deletedUser.getName();
         }
         else{
-            return "You dont have the rights to delete";
+            return "You don't have the rights to delete";
         }
     }
 }
