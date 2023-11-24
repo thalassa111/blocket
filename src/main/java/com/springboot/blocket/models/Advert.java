@@ -32,7 +32,6 @@ public class Advert {
     @Column(nullable = false)
     public Date date;
 
-
     @Column(nullable = false)
     public int price;
 

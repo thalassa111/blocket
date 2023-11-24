@@ -22,8 +22,6 @@ public class AdvertService {
                 advertDto.getCategory(),
                 advertDto.getLocation());
 
-
-
         return this.advertRepository.save(advert);
     }
 }
