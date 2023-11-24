@@ -1,5 +1,6 @@
 package com.springboot.blocket.controllers;
 
+import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.LoginRequestDto;
 import com.springboot.blocket.dtos.UserCustomerDto;
 import com.springboot.blocket.models.User;
@@ -46,5 +47,14 @@ public class UserController {
     @GetMapping("/user/verify-token")
     public String verifyToken(@RequestParam String token){
         return userService.verifyToken(token);
+    }
+
+    //deletes a user, provide the id of who is to be deleted,
+    //and token of the one doing the deleting, need to be an admin.
+    @DeleteMapping("/user/delete-user")
+    public ResponseEntity<String> deleteUser(@RequestBody DeleteUserDto deleteUserDto)
+    {
+        String deletedUser = userService.deleteUser(deleteUserDto);
+        return ResponseEntity.ok(deletedUser);
     }
 }
