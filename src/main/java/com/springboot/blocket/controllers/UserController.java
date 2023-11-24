@@ -30,7 +30,7 @@ public class UserController {
     //will generate a token for a user who provide a correct email and password
     @GetMapping("/user/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
-        return ResponseEntity.ok("Generated token: " + userService.generateTokenForUserByEmailAndPassword(loginRequestDto.email, loginRequestDto.password));
+        return ResponseEntity.ok(userService.generateTokenForUserByEmailAndPassword(loginRequestDto.email, loginRequestDto.password));
     }
 
     //get a user based on token
@@ -44,6 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllCustomers());
     }
 
+    //just for verification to see if a token is valid
     @GetMapping("/user/verify-token")
     public String verifyToken(@RequestParam String token){
         return userService.verifyToken(token);
