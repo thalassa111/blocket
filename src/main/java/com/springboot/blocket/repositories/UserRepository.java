@@ -4,6 +4,7 @@ import com.springboot.blocket.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findAll();
@@ -11,4 +12,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
 
     User findById(int id);
+
 }
