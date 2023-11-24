@@ -1,5 +1,7 @@
 package com.springboot.blocket.models;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,5 +35,10 @@ public class User {
     public String role;
 
     @Column(nullable = false)
-    public String password;
+    private String password;
+
+    public void setPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
+    }
 }

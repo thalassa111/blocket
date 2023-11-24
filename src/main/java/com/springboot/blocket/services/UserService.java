@@ -6,6 +6,7 @@ import com.springboot.blocket.repositories.UserRepository;
 import com.springboot.blocket.utilities.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -26,10 +27,14 @@ public class UserService {
                                     createDto.getRole(),
                                     createDto.getPassword());
 
+         // Hash the password before saving
+         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+         customer.setPassword(passwordEncoder.encode(createDto.getPassword()));
+
          return this.userRepository.save(customer);
     }
 
-    public String generateTokenForUserByEmailAndPassword(String email, String password){
+    public String generateTokenForUserByEmailAndPassword(String email, String password) {
         try {
             User user = userRepository.findByEmail(email);
             if (user != null) {
@@ -46,25 +51,23 @@ public class UserService {
         return "wrong password";
     }
 
-    public User getCustomerByToken(String token){
+    public User getCustomerByToken(String token) {
         String subject = JwtUtil.getSubjectFromToken(token);
         return userRepository.findById(Integer.parseInt(subject));
     }
 
-
-    //only used for testing
-    public List<User> getAllCustomers(){
+    // only used for testing
+    public List<User> getAllCustomers() {
         return userRepository.findAll();
     }
 
-    //just for testing token
-    public String verifyToken(String token){
+    // just for testing token
+    public String verifyToken(String token) {
         boolean isValid = JwtUtil.verifyToken(token);
-        if(isValid){
+        if (isValid) {
             String subject = JwtUtil.getSubjectFromToken(token);
             return "Token is valid, Subject: " + subject;
-        }
-        else {
+        } else {
             return "invalid token";
         }
     }
