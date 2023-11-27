@@ -5,6 +5,8 @@ import com.springboot.blocket.repositories.AdvertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AdvertService {
 
@@ -23,5 +25,8 @@ public class AdvertService {
                 advertDto.getLocation());
 
         return this.advertRepository.save(advert);
+    }
+    public List<Advert> getAllAdverts() {
+        return advertRepository.findAll();
     }
 }
