@@ -1,9 +1,11 @@
 package com.springboot.blocket.controllers;
 
+import com.springboot.blocket.dtos.UpdateAdvertDto;
 import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.services.AdvertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,11 +31,19 @@ public class AdvertController {
         List<Advert> adverts = advertService.getAllAdverts();
         return ResponseEntity.ok(adverts);
     }
+
+    @PutMapping("/advert/update/{id}")
+    public ResponseEntity<Advert> updateAdvert(@PathVariable("id") int id, @RequestBody UpdateAdvertDto updatedAdvertDto) {
+        Advert updatedAdvert = advertService.updateAdvert(id, updatedAdvertDto);
+        return ResponseEntity.ok(updatedAdvert);
+    }
+
     @GetMapping("/advert/{id}")
     public ResponseEntity<Advert> getAdvertById(@PathVariable int id) {
         Optional<Advert> advert = advertService.getAdvertById(id);
         return advert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+    
     @GetMapping("/advert/by-category/{category}")
     public ResponseEntity<List<Advert>> getAdvertsByCategory(@PathVariable String category) {
         List<Advert> adverts = advertService.getAdvertsByCategory(category);
