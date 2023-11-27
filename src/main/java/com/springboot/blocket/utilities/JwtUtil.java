@@ -12,11 +12,13 @@ import java.util.Date;
 public class JwtUtil {
     private static final String secret = "super-secret-key";
 
-    public static String createToken(String subject) {
+    public static String createToken(String subject, String name) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
+        //including the name and id in the token, easier later when used since id is needed and also unique
         return JWT.create()
                 .withSubject(subject)
+                .withClaim("name", name)
                 .withExpiresAt(new Date(System.currentTimeMillis() + 3600000))
                 .sign(algorithm);
     }
@@ -33,6 +35,7 @@ public class JwtUtil {
         }
     }
 
+    //returns the subject(id) from token
     public static String getSubjectFromToken(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);

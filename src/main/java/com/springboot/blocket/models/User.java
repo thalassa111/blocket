@@ -14,12 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
 
-    public User(String name, String email, String address, String role, String password){
+
+    public User(String name, String email, String address, String role, String password, String salt){
         this.name = name;
         this.email = email;
         this.address = address;
         this.role = role;
         this.password = password;
+        this.salt = salt;
     }
 
     @Column(nullable = false)
@@ -35,10 +37,8 @@ public class User {
     public String role;
 
     @Column(nullable = false)
-    private String password;
+    public String password;
 
-    public void setPassword(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
-    }
+    @Column
+    public String salt;
 }
