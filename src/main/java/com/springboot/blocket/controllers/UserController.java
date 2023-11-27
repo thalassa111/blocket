@@ -2,6 +2,7 @@ package com.springboot.blocket.controllers;
 
 import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.LoginRequestDto;
+import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.dtos.UserCustomerDto;
 import com.springboot.blocket.models.User;
 import com.springboot.blocket.services.UserService;
@@ -44,10 +45,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllCustomers());
     }
 
-    //just for verification to see if a token is valid
     @GetMapping("/user/verify-token")
     public String verifyToken(@RequestParam String token){
         return userService.verifyToken(token);
+    }
+
+    @PutMapping("/user/update-user/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id , @RequestBody UpdateUserDto updateUserDto) {
+        var result = this.userService.updateUser(id, updateUserDto);
+        return ResponseEntity.ok(result);
     }
 
     //deletes a user, provide the id of who is to be deleted,
@@ -59,3 +65,5 @@ public class UserController {
         return ResponseEntity.ok(deletedUser);
     }
 }
+
+//123
