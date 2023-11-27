@@ -38,7 +38,10 @@ public class JwtUtil {
     //returns the subject(id) from token
     public static String getSubjectFromToken(String token) {
         try {
-            DecodedJWT jwt = JWT.decode(token);
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+
+            DecodedJWT jwt = verifier.verify(token);
             return jwt.getSubject();
         } catch (JWTDecodeException e) {
             return null;
