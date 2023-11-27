@@ -9,6 +9,7 @@ import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AdvertController {
@@ -35,5 +36,17 @@ public class AdvertController {
     public ResponseEntity<Advert> updateAdvert(@PathVariable("id") int id, @RequestBody UpdateAdvertDto updatedAdvertDto) {
         Advert updatedAdvert = advertService.updateAdvert(id, updatedAdvertDto);
         return ResponseEntity.ok(updatedAdvert);
+    }
+
+    @GetMapping("/advert/{id}")
+    public ResponseEntity<Advert> getAdvertById(@PathVariable int id) {
+        Optional<Advert> advert = advertService.getAdvertById(id);
+        return advert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/advert/by-category/{category}")
+    public ResponseEntity<List<Advert>> getAdvertsByCategory(@PathVariable String category) {
+        List<Advert> adverts = advertService.getAdvertsByCategory(category);
+        return ResponseEntity.ok(adverts);
     }
 }

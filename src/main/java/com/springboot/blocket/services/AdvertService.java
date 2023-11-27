@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdvertService {
@@ -32,6 +33,12 @@ public class AdvertService {
     }
     public List<Advert> getAllAdverts() {
         return advertRepository.findAll();
+    }
+    public Optional<Advert> getAdvertById(int id) {
+        return advertRepository.findById(id);
+    }
+    public List<Advert> getAdvertsByCategory(String category) {
+        return advertRepository.findByCategory(category);
     }
 
     public Advert updateAdvert(int id, UpdateAdvertDto updatedAdvertDto) {
