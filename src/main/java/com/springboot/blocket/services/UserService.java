@@ -1,5 +1,6 @@
 package com.springboot.blocket.services;
 
+import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.UserCustomerDto;
 import com.springboot.blocket.models.User;
@@ -75,6 +76,28 @@ public class UserService {
         else {
             return "invalid token";
         }
+    }
+
+    public User updateUser (int sid, UpdateUserDto dto) {
+
+        var user = this.userRepository.findById(sid);
+
+        if (dto.getName().isPresent()){
+            user.setName(dto.getName().get());
+        }
+
+        if (dto.getEmail().isPresent()) {
+            user.setEmail(dto.getEmail().get());
+        }
+
+        if (dto.getAddress().isPresent()) {
+            user.setAddress(dto.getAddress().get());
+        }
+
+        if (dto.getRole().isPresent()) {
+            user.setRole(dto.getRole().get());
+        }
+        return this.userRepository.save(user);
     }
 
     public String deleteUser(DeleteUserDto deleteUserDto) {
