@@ -32,7 +32,7 @@ public class AdvertController {
     }
 
     @PutMapping("/advert/update/{id}")
-    public ResponseEntity<Advert> updateAdvert(@PathVariable("id") Long id, @RequestBody UpdateAdvertDto updatedAdvertDto) {
+    public ResponseEntity<Advert> updateAdvert(@PathVariable("id") int id, @RequestBody UpdateAdvertDto updatedAdvertDto) {
         Advert updatedAdvert = advertService.updateAdvert(id, updatedAdvertDto);
         return ResponseEntity.ok(updatedAdvert);
     }

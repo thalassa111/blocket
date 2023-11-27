@@ -3,6 +3,9 @@ package com.springboot.blocket.services;
 import com.springboot.blocket.dtos.UpdateAdvertDto;
 import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.repositories.AdvertRepository;
+
+import lombok.experimental.var;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,17 @@ public class AdvertService {
     }
     public List<Advert> getAllAdverts() {
         return advertRepository.findAll();
+    }
+
+    public Advert updateAdvert(int id, UpdateAdvertDto updatedAdvertDto) {
+        Advert advert = advertRepository.findById(id).orElseThrow();
+        advert.setTitle(updatedAdvertDto.getTitle());
+        advert.setDescription(updatedAdvertDto.getDescription());
+        advert.setDate(updatedAdvertDto.getDate());
+        advert.setPrice(updatedAdvertDto.getPrice());
+        advert.setCategory(updatedAdvertDto.getCategory());
+        advert.setLocation(updatedAdvertDto.getLocation());
+        return advertRepository.save(advert);
     }
 
 }
