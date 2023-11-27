@@ -101,16 +101,24 @@ public class UserService {
     }
 
     public String deleteUser(DeleteUserDto deleteUserDto) {
+        //check token, if its false, dont continue
+        if(!JwtUtil.verifyToken(deleteUserDto.getToken())){
+            return "invalid token";
+        }
         //get the subject, which is the id, so we can get the user
         String idFromToken = JwtUtil.getSubjectFromToken(deleteUserDto.getToken());
         //get the user, to check for role
         User user = userRepository.findById(Integer.parseInt(idFromToken));
         //get the soon to be deleted user, so we can return its name
-        User deletedUser = userRepository.findById(deleteUserDto.getId());
+        User userToBeDeleted = userRepository.findById(deleteUserDto.getId());
+        //check if the user to be deleted exists
+        if(userToBeDeleted == null){
+            return "user not found";
+        }
         //check to see if user with below token has admin right to delete
         if(user.getRole().equals("admin")){
             userRepository.deleteById(deleteUserDto.getId());
-            return "User has been deleted: " + deletedUser.getName();
+            return "User has been deleted: " + userToBeDeleted.getName();
         }
         else{
             return "You don't have the rights to delete";
