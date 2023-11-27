@@ -1,5 +1,6 @@
 package com.springboot.blocket.services;
 
+import com.springboot.blocket.dtos.UpdateAdvertDto;
 import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.repositories.AdvertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,4 +30,5 @@ public class AdvertService {
     public List<Advert> getAllAdverts() {
         return advertRepository.findAll();
     }
+
 }
