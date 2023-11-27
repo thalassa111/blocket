@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtil {
     private static final String secret = "super-secret-key";
 
-    public static String createToken(String subject) {
+    public static String createToken(String subject, String name) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()
@@ -33,6 +33,7 @@ public class JwtUtil {
         }
     }
 
+    //returns the subject(id) from token
     public static String getSubjectFromToken(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
