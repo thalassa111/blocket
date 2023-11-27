@@ -33,4 +33,7 @@ public class AdvertService {
     public Optional<Advert> getAdvertById(int id) {
         return advertRepository.findById(id);
     }
+    public List<Advert> getAdvertsByCategory(String category) {
+        return advertRepository.findByCategory(category);
+    }
 }

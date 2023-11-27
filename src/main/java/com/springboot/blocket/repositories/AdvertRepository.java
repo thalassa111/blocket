@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertRepository extends JpaRepository<Advert, Integer> {
-List<Advert> findAll();
-Optional<Advert> findById(int id);
+    List<Advert> findAll();
+    Optional<Advert> findById(int id);
+    List<Advert> findByCategory(String category);
 }

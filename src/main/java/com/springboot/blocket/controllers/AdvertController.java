@@ -34,4 +34,9 @@ public class AdvertController {
         Optional<Advert> advert = advertService.getAdvertById(id);
         return advert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/advert/by-category/{category}")
+    public ResponseEntity<List<Advert>> getAdvertsByCategory(@PathVariable String category) {
+        List<Advert> adverts = advertService.getAdvertsByCategory(category);
+        return ResponseEntity.ok(adverts);
+    }
 }
