@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AdvertController {
@@ -26,6 +27,16 @@ public class AdvertController {
     @GetMapping("/advert/all")
     public ResponseEntity<List<Advert>> getAllAdverts() {
         List<Advert> adverts = advertService.getAllAdverts();
+        return ResponseEntity.ok(adverts);
+    }
+    @GetMapping("/advert/{id}")
+    public ResponseEntity<Advert> getAdvertById(@PathVariable int id) {
+        Optional<Advert> advert = advertService.getAdvertById(id);
+        return advert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/advert/by-category/{category}")
+    public ResponseEntity<List<Advert>> getAdvertsByCategory(@PathVariable String category) {
+        List<Advert> adverts = advertService.getAdvertsByCategory(category);
         return ResponseEntity.ok(adverts);
     }
 }
