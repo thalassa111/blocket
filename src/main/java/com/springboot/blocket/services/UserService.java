@@ -10,6 +10,7 @@ import com.springboot.blocket.utilities.PasswordEncoderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class UserService {
          return this.userRepository.save(customer);
     }
 
-    public String generateTokenForUserByEmailAndPassword(String email, String password){
+    public String generateTokenForUserByEmailAndPassword(String email, String password) {
         try {
             User user = userRepository.findByEmail(email);
             if (user != null) {
@@ -54,7 +55,7 @@ public class UserService {
         return "wrong password";
     }
 
-    public User getCustomerByToken(String token){
+    public User getCustomerByToken(String token) {
         String subject = JwtUtil.getSubjectFromToken(token);
         return userRepository.findById(Integer.parseInt(subject));
     }
@@ -64,8 +65,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    //just for testing token
-    public String verifyToken(String token){
+    // just for testing token
+    public String verifyToken(String token) {
         boolean isValid = JwtUtil.verifyToken(token);
         if(isValid){
             String id = JwtUtil.getSubjectFromToken(token);
