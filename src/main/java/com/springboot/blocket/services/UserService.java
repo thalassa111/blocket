@@ -1,21 +1,23 @@
 package com.springboot.blocket.services;
 
-import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.dtos.DeleteUserDto;
-import com.springboot.blocket.dtos.UserCustomerDto;
+import com.springboot.blocket.dtos.RegisterUserDto;
+import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.models.User;
 import com.springboot.blocket.repositories.UserRepository;
 import com.springboot.blocket.utilities.JwtUtil;
 import com.springboot.blocket.utilities.PasswordEncoderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
     private PasswordEncoderUtil passwordEncoder;
@@ -25,14 +27,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createCustomer(UserCustomerDto createDto){
+    public User createCustomer(RegisterUserDto createDto){
         String salt = BCrypt.gensalt();
         var customer = new User(   createDto.getName(),
                                     createDto.getEmail(),
                                     createDto.getAddress(),
-                                    createDto.getRole(),
                                     passwordEncoder.encodePassword(createDto.getPassword(), salt),
-                                    salt);
+                                    salt,
+                                    createDto.getAuthority());
+
          return this.userRepository.save(customer);
     }
 
@@ -42,11 +45,11 @@ public class UserService {
             if (user != null) {
                 //will compare the raw password with the hashed one along with the salt, if they match, its ok
                 if(passwordEncoder.verifyPassword(password, user.password, user.getSalt())){
-                    System.out.println("user.getID: " + user.getId());
-                    return "Generated token: " + JwtUtil.createToken(String.valueOf(user.getId()), user.getName());
+                    //return a token with id, authority and name in the payload
+                    return "Generated token: " + JwtUtil.createToken(String.valueOf(user.getId()), user.getAuthority(), user.getName());
                 }
             } else {
-                return "email not found";
+                return "email/user not found";
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,9 +97,6 @@ public class UserService {
             user.setAddress(dto.getAddress().get());
         }
 
-        if (dto.getRole().isPresent()) {
-            user.setRole(dto.getRole().get());
-        }
         return this.userRepository.save(user);
     }
 
@@ -116,12 +116,25 @@ public class UserService {
             return "user not found";
         }
         //check to see if user with below token has admin right to delete
-        if(user.getRole().equals("admin")){
+        if(user.getAuthorities().toString().contains("ADMIN")){
             userRepository.deleteById(deleteUserDto.getId());
             return "User has been deleted: " + userToBeDeleted.getName();
         }
         else{
             return "You don't have the rights to delete";
         }
+    }
+
+    //has to do with spring security, basically authentication and authorization
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user = this.userRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Could not find user '" + username + "'."));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getAuthority())
+                .build();
     }
 }
