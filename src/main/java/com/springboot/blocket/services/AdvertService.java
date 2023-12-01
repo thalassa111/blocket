@@ -4,8 +4,6 @@ import com.springboot.blocket.dtos.UpdateAdvertDto;
 import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.repositories.AdvertRepository;
 
-import lombok.experimental.var;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

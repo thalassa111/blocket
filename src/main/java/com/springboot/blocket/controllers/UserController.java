@@ -3,7 +3,7 @@ package com.springboot.blocket.controllers;
 import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.LoginRequestDto;
 import com.springboot.blocket.dtos.UpdateUserDto;
-import com.springboot.blocket.dtos.UserCustomerDto;
+import com.springboot.blocket.dtos.RegisterUserDto;
 import com.springboot.blocket.models.User;
 import com.springboot.blocket.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    //to register a new user, using UserDto
     @PostMapping("/user/register")
-    public ResponseEntity<String> addCustomer(@RequestBody UserCustomerDto customerDto){
-        userService.createCustomer(customerDto);
-        return ResponseEntity.ok("customer added: " + customerDto.getName());
+    public ResponseEntity<String> addCustomer(@RequestBody RegisterUserDto registerUserDto){
+        userService.createCustomer(registerUserDto);
+        return ResponseEntity.ok("customer added: " + registerUserDto.getName());
     }
 
     //will generate a token for a user who provide a correct email and password
@@ -40,11 +41,13 @@ public class UserController {
         return ResponseEntity.ok(userService.getCustomerByToken(token));
     }
 
+    //return all users
     @GetMapping("/user/get-all-users")
     public ResponseEntity<List<User>> getAllCustomers(){
         return ResponseEntity.ok(userService.getAllCustomers());
     }
 
+    //used to verify the token, nice to have for testing
     @GetMapping("/user/verify-token")
     public String verifyToken(@RequestParam String token){
         return userService.verifyToken(token);
@@ -65,5 +68,3 @@ public class UserController {
         return ResponseEntity.ok(deletedUser);
     }
 }
-
-//123
