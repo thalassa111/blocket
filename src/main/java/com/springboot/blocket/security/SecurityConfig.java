@@ -31,7 +31,6 @@ public class SecurityConfig {
                 .addFilterAfter(new JWTVerifyFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/user/**").permitAll()
-/*                        .requestMatchers("/advert/**").hasRole("ADMIN")*/
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
