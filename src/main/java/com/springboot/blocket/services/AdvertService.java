@@ -85,4 +85,22 @@ public class AdvertService {
             return null;
         }
     }
+    public void deleteAdvert(int id, String token) {
+        // Validate the token and get user ID
+        if (JwtUtil.verifyToken(token)) {
+            int userIdFromToken = Integer.parseInt(JwtUtil.getSubjectFromToken(token));
+
+            // Check if the user who created the advert matches the user from the token
+            Optional<Advert> optionalAdvert = advertRepository.findById(id);
+            Advert advert = optionalAdvert.orElse(null);
+
+            if (advert != null && advert.getUser().getId() == userIdFromToken) {
+                advertRepository.deleteById(id);
+            } else {
+                throw new RuntimeException("Not authorized to delete this advert");
+            }
+        } else {
+            throw new RuntimeException("Invalid token");
+        }
+    }
 }
