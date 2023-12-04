@@ -81,43 +81,51 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User updateUser (int sid, UpdateUserDto dto) {
-
-        var user = this.userRepository.findById(sid);
-
-        if (dto.getName().isPresent()){
-            user.setName(dto.getName().get());
+    public User updateUser (int sid, UpdateUserDto dto, String token) {
+        //check token validity
+        if(JwtUtil.verifyToken(token)) {
+            //need to compare the id from token and the one being updated
+            int tokenId = Integer.parseInt(JwtUtil.getSubjectFromToken(token));
+            var user = this.userRepository.findById(sid);
+            if(user.getId() == tokenId) {
+                if (dto.getName().isPresent()) {
+                    user.setName(dto.getName().get());
+                }
+                if (dto.getEmail().isPresent()) {
+                    user.setEmail(dto.getEmail().get());
+                }
+                if (dto.getAddress().isPresent()) {
+                    user.setAddress(dto.getAddress().get());
+                }
+                return this.userRepository.save(user);
+            } else{
+                System.out.println("you dont have the permission");
+                return null;
+            }
+        }else{
+            System.out.println("invalid token");
+            return null;
         }
-
-        if (dto.getEmail().isPresent()) {
-            user.setEmail(dto.getEmail().get());
-        }
-
-        if (dto.getAddress().isPresent()) {
-            user.setAddress(dto.getAddress().get());
-        }
-
-        return this.userRepository.save(user);
     }
 
-    public String deleteUser(DeleteUserDto deleteUserDto) {
+    public String deleteUser(int id, String token) {
         //check token, if its false, dont continue
-        if(!JwtUtil.verifyToken(deleteUserDto.getToken())){
+        if(!JwtUtil.verifyToken(token)){
             return "invalid token";
         }
         //get the subject, which is the id, so we can get the user
-        String idFromToken = JwtUtil.getSubjectFromToken(deleteUserDto.getToken());
+        String idFromToken = JwtUtil.getSubjectFromToken(token);
         //get the user, to check for role
         User user = userRepository.findById(Integer.parseInt(idFromToken));
         //get the soon to be deleted user, so we can return its name
-        User userToBeDeleted = userRepository.findById(deleteUserDto.getId());
+        User userToBeDeleted = userRepository.findById(id);
         //check if the user to be deleted exists
         if(userToBeDeleted == null){
             return "user not found";
         }
         //check to see if user with below token has admin right to delete
         if(user.getAuthorities().toString().contains("ADMIN")){
-            userRepository.deleteById(deleteUserDto.getId());
+            userRepository.deleteById(id);
             return "User has been deleted: " + userToBeDeleted.getName();
         }
         else{
