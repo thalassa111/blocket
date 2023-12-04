@@ -5,7 +5,6 @@ import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.services.AdvertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +21,9 @@ public class AdvertController {
     }
 
     @PostMapping("/advert/create")
-    public ResponseEntity<Advert> createAdvert(@RequestBody Advert advert) {
-        Advert createdAdvert = advertService.createAdvert(advert);
+    public ResponseEntity<Advert> createAdvert(@RequestBody Advert advert,
+                                               @RequestHeader("Authorization") String token) {
+        Advert createdAdvert = advertService.createAdvert(advert, token);
         return ResponseEntity.ok(createdAdvert);
     }
     @GetMapping("/advert/all")
@@ -48,5 +48,11 @@ public class AdvertController {
     public ResponseEntity<List<Advert>> getAdvertsByCategory(@PathVariable String category) {
         List<Advert> adverts = advertService.getAdvertsByCategory(category);
         return ResponseEntity.ok(adverts);
+    }
+
+    //Return a list of all adverts based on userId taken from token
+    @GetMapping("/advert/user/show-all")
+    public ResponseEntity<List<Advert>> getAllUserAdverts(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(advertService.getAllUserAdverts(token));
     }
 }

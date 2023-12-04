@@ -4,6 +4,7 @@ import com.springboot.blocket.dtos.UpdateAdvertDto;
 import com.springboot.blocket.models.Advert;
 import com.springboot.blocket.repositories.AdvertRepository;
 
+import com.springboot.blocket.utilities.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +15,21 @@ import java.util.Optional;
 public class AdvertService {
 
     private AdvertRepository advertRepository;
+    private UserService userService;
 
     @Autowired
-    public AdvertService(AdvertRepository advertRepository) {
+    public AdvertService(AdvertRepository advertRepository, UserService userService) {
         this.advertRepository = advertRepository;
+        this.userService = userService;
     }
-    public Advert createAdvert(Advert advertDto){
-        var advert = new Advert(   advertDto.getTitle(),
-                advertDto.getDescription(),
-                advertDto.getDate(),
-                advertDto.getPrice(),
-                advertDto.getCategory(),
-                advertDto.getLocation());
+    public Advert createAdvert(Advert advertDto, String token){
+        var advert = new Advert(    advertDto.getTitle(),
+                                    advertDto.getDescription(),
+                                    advertDto.getDate(),
+                                    advertDto.getPrice(),
+                                    advertDto.getCategory(),
+                                    advertDto.getLocation(),
+                                    userService.getUserByToken(token));
 
         return this.advertRepository.save(advert);
     }
@@ -50,4 +54,17 @@ public class AdvertService {
         return advertRepository.save(advert);
     }
 
+    public List<Advert> getAllUserAdverts(String token) {
+        //verify if token is legit
+        if (JwtUtil.verifyToken(token)) {
+            //extract id from token
+            String tokenId = JwtUtil.getSubjectFromToken(token);
+            //get the list of adverts matching the extracted id
+            List<Advert> userAdverts = advertRepository.findByUserId(Integer.parseInt(tokenId));
+            return userAdverts;
+        } else {
+            System.out.println("token invalid");
+            return null;
+        }
+    }
 }
