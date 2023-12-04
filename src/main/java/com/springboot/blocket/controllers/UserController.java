@@ -53,6 +53,8 @@ public class UserController {
         return userService.verifyToken(token);
     }
 
+    //update information on user, name, email and address
+    //add function to change password and role later
     @PutMapping("/user/update-user/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id,
                                            @RequestBody UpdateUserDto updateUserDto,

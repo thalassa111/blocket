@@ -11,5 +11,4 @@ public class UpdateUserDto {
     private Optional<String> name;
     private Optional<String> email;
     private Optional<String> address;
-/*    private Optional<String> role;*/
 }

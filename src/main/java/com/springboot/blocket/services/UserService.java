@@ -82,11 +82,12 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateUser (int sid, UpdateUserDto dto, String token) {
+        //check token validity
         if(JwtUtil.verifyToken(token)) {
+            //need to compare the id from token and the one being updated
             int tokenId = Integer.parseInt(JwtUtil.getSubjectFromToken(token));
             var user = this.userRepository.findById(sid);
             if(user.getId() == tokenId) {
-
                 if (dto.getName().isPresent()) {
                     user.setName(dto.getName().get());
                 }
