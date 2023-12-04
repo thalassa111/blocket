@@ -43,15 +43,33 @@ public class AdvertService {
         return advertRepository.findByCategory(category);
     }
 
-    public Advert updateAdvert(int id, UpdateAdvertDto updatedAdvertDto) {
-        Advert advert = advertRepository.findById(id).orElseThrow();
-        advert.setTitle(updatedAdvertDto.getTitle());
-        advert.setDescription(updatedAdvertDto.getDescription());
-        advert.setDate(updatedAdvertDto.getDate());
-        advert.setPrice(updatedAdvertDto.getPrice());
-        advert.setCategory(updatedAdvertDto.getCategory());
-        advert.setLocation(updatedAdvertDto.getLocation());
-        return advertRepository.save(advert);
+    public Advert updateAdvert(int id, UpdateAdvertDto updatedAdvertDto, String token) {
+        //check to see if token is valid
+        if(JwtUtil.verifyToken(token)) {
+            int tokenId = Integer.parseInt(JwtUtil.getSubjectFromToken(token));
+            //get the advert
+            Optional<Advert> optionalAdvert = advertRepository.findById(id);
+            Advert tmpAdvert = optionalAdvert.orElse(null);
+            //we need to id of the user who created the advert
+            int idUserInAdvert = tmpAdvert.getUser().getId();
+            //compare if the user who created the advert, matches the user of the token
+            if (idUserInAdvert == tokenId) {
+                Advert advert = advertRepository.findById(id).orElseThrow();
+                advert.setTitle(updatedAdvertDto.getTitle());
+                advert.setDescription(updatedAdvertDto.getDescription());
+                advert.setDate(updatedAdvertDto.getDate());
+                advert.setPrice(updatedAdvertDto.getPrice());
+                advert.setCategory(updatedAdvertDto.getCategory());
+                advert.setLocation(updatedAdvertDto.getLocation());
+                return advertRepository.save(advert);
+            }else{
+                System.out.println("not authorized");
+                return null;
+            }
+        }else {
+            System.out.println("token invalid");
+            return null;
+        }
     }
 
     public List<Advert> getAllUserAdverts(String token) {
