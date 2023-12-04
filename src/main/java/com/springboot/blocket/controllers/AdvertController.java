@@ -32,9 +32,11 @@ public class AdvertController {
         return ResponseEntity.ok(adverts);
     }
 
-    @PutMapping("/advert/update/{id}")
-    public ResponseEntity<Advert> updateAdvert(@PathVariable("id") int id, @RequestBody UpdateAdvertDto updatedAdvertDto) {
-        Advert updatedAdvert = advertService.updateAdvert(id, updatedAdvertDto);
+    @PutMapping("/advert/user/update/{id}")
+    public ResponseEntity<Advert> updateAdvert( @PathVariable("id") int id,
+                                                @RequestBody UpdateAdvertDto updatedAdvertDto,
+                                                @RequestHeader("Authorization") String token) {
+        Advert updatedAdvert = advertService.updateAdvert(id, updatedAdvertDto, token);
         return ResponseEntity.ok(updatedAdvert);
     }
 
