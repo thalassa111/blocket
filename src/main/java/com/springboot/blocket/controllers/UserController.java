@@ -54,17 +54,20 @@ public class UserController {
     }
 
     @PutMapping("/user/update-user/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id , @RequestBody UpdateUserDto updateUserDto) {
-        var result = this.userService.updateUser(id, updateUserDto);
+    public ResponseEntity<User> updateUser(@PathVariable int id,
+                                           @RequestBody UpdateUserDto updateUserDto,
+                                           @RequestHeader("Authorization") String token) {
+        var result = this.userService.updateUser(id, updateUserDto, token);
         return ResponseEntity.ok(result);
     }
 
     //deletes a user, provide the id of who is to be deleted,
     //and token of the one doing the deleting, need to be an admin.
-    @DeleteMapping("/user/delete-user")
-    public ResponseEntity<String> deleteUser(@RequestBody DeleteUserDto deleteUserDto)
+    @DeleteMapping("/user/delete-user/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable int id,
+                                             @RequestHeader("Authorization") String token)
     {
-        String deletedUser = userService.deleteUser(deleteUserDto);
+        String deletedUser = userService.deleteUser(id, token);
         return ResponseEntity.ok(deletedUser);
     }
 }

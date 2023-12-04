@@ -40,7 +40,6 @@ public class JWTVerifyFilter extends OncePerRequestFilter {
                     .build();
             //remove the "Bearer" part of the header, since the verifier compares the raw hash data straight up
             authHeader = authHeader.replace("Bearer ", "");
-
             //verify the token
             var jwt = verifier.verify(authHeader);
             //get user based on name
