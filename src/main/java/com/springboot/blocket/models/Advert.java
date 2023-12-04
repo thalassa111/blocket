@@ -14,13 +14,14 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
 
-    public Advert(String title, String description, Date date, Integer price, String category, String location) {
+    public Advert(String title, String description, Date date, Integer price, String category, String location, User user) {
         this.title = title;
         this.description = description;
         this.date = date;
         this.price = price;
         this.category = category;
         this.location = location;
+        this.user = user;
     }
 
     @Column(nullable = false)
@@ -41,4 +42,7 @@ public class Advert {
     @Column(nullable = false)
     public String location;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

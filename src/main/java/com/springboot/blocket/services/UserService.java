@@ -137,4 +137,10 @@ public class UserService implements UserDetailsService {
                 .roles(user.getAuthority())
                 .build();
     }
+
+    public User getUserByToken(String token) {
+        //gets id from token
+        String subject = JwtUtil.getSubjectFromToken(token);
+        return userRepository.findById(Integer.parseInt(subject));
+    }
 }
