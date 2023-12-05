@@ -1,6 +1,5 @@
 package com.springboot.blocket.services;
 
-import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.RegisterUserDto;
 import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.models.User;
@@ -29,7 +28,7 @@ public class UserService implements UserDetailsService {
 
     public User createCustomer(RegisterUserDto createDto){
         String salt = BCrypt.gensalt();
-        var customer = new User(   createDto.getName(),
+        var customer = new User(    createDto.getName(),
                                     createDto.getEmail(),
                                     createDto.getAddress(),
                                     passwordEncoder.encodePassword(createDto.getPassword(), salt),

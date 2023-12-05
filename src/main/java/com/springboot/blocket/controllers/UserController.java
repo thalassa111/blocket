@@ -1,6 +1,5 @@
 package com.springboot.blocket.controllers;
 
-import com.springboot.blocket.dtos.DeleteUserDto;
 import com.springboot.blocket.dtos.LoginRequestDto;
 import com.springboot.blocket.dtos.UpdateUserDto;
 import com.springboot.blocket.dtos.RegisterUserDto;

@@ -53,5 +53,4 @@ public class JWTVerifyFilter extends OncePerRequestFilter {
             throw new IllegalStateException("Failed to authenticate");
         }
     }
-
 }
